@@ -5,7 +5,8 @@ orbs:
 
 jobs:
   checkout-code:
-    - checkout
+    steps:
+      - checkout
   build-result:
     steps:
       - run: 
