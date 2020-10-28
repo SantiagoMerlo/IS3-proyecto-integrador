@@ -9,15 +9,27 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@master
+            - name: Docker Login
+              env:
+                DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+                DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+              run: |
+                docker login -u $DOCKER_USER -p $DOCKERHUB_PASSWORD
             - name: Build Result
               run: |
-                docker build -t dockersamples/result ./result
+                docker build -t santiagomerlo/result:latest ./result
             - name: Build Vote
               run: |
-                docker build -t dockersamples/vote ./vote
+                docker build -t santiagomerlo/vote:latest ./vote
             - name: Build Worker
               run: |
-                docker build -t dockersamples/worker ./worker
+                docker build -t santiagomerlo/worker:latest ./worker
+            - name: Docker push
+              run: |
+                docker push santiagomerlo/worker:latest
+                docker push santiagomerlo/vote:latest
+                docker push santiagomerlo/result:latest
+                
 
 #            - name: build and push to docker
 #              uses: docker/build-push-action@v1
