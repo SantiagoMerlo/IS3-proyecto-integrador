@@ -9,16 +9,27 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@master
-            - name: build and push to docker
-              uses: docker/build-push-action@v1
-              with:
-                username: ${{ secrets.DOCKERHUB_USERNAME }}
-                password: ${{ secrets.DOCKERHUB_PASSWORD }}
-                repository: ${{ github.repository }}
-                tag_with_ref: true
-                tag_with_sha: true
-                tags: ${{ github.sha }}
+            - name: Build Result
+              run: |
+                docker build -t dockersamples/result ./result
+            - name: Build Vote
+              run: |
+                docker build -t dockersamples/vote ./vote
+            - name: Build Worker
+              run: |
+                docker build -t dockersamples/worker ./worker
 
+#            - name: build and push to docker
+#              uses: docker/build-push-action@v1
+#              with:
+#                username: ${{ secrets.DOCKERHUB_USERNAME }}
+#                password: ${{ secrets.DOCKERHUB_PASSWORD }}
+#                file: 
+#                repository: ${{ github.repository }}
+#                tag_with_ref: true
+#                tag_with_sha: true
+#                tags: santiagomerlo/is3-integration:latest
+#
 
 
 #jobs: 
