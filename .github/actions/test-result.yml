@@ -1,0 +1,9 @@
+name: test-result
+description: "Toma las salidas del testing"
+author: "santiago.agustin.merlo@gmail.com"
+
+outputs:
+    state:
+        description: "1 si paso correctamente, 0 sino."
+runs:
+    

@@ -1,68 +1,48 @@
 name: ci
 on:
-    push:
-        branches: master
+  push:
+    branches: master
 
 jobs:
-    deploy:
-        name: deploy to cluster
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@master
-            - name: Docker Login
-              env:
-                DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
-                DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-              run: |
-                docker login -u $DOCKER_USER -p $DOCKERHUB_PASSWORD
-            - name: Build Result
-              run: |
-                docker build -t santiagomerlo/result:latest ./result
-            - name: Build Vote
-              run: |
-                docker build -t santiagomerlo/vote:latest ./vote
-            - name: Build Worker
-              run: |
-                docker build -t santiagomerlo/worker:latest ./worker
-            - name: Docker push
-              run: |
-                docker push santiagomerlo/worker:latest
-                docker push santiagomerlo/vote:latest
-                docker push santiagomerlo/result:latest
-                
+  login:
+    name: Login in DockerHub
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Docker Login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: docker login -u $DOCKER_USER -p $DOCKERHUB_PASSWORD
 
-#            - name: build and push to docker
-#              uses: docker/build-push-action@v1
-#              with:
-#                username: ${{ secrets.DOCKERHUB_USERNAME }}
-#                password: ${{ secrets.DOCKERHUB_PASSWORD }}
-#                file: 
-#                repository: ${{ github.repository }}
-#                tag_with_ref: true
-#                tag_with_sha: true
-#                tags: santiagomerlo/is3-integration:latest
-#
+  building:
+      name: deploy Container
+      runs-on: ubuntu-latest
+      steps:
+          - name: Build Result
+            run: docker build -t santiagomerlo/result:latest ./result
+          - name: Build Vote
+            run: docker build -t santiagomerlo/vote:latest ./vote
+          - name: Build Worker
+            run: docker build -t santiagomerlo/worker:latest ./worker
 
+  testing:
+    name: Testing Containers
+    runs-on: ubuntu-latest
+    needs: building
+      steps:
+        - name: Testin Results
+        - run: docker-compose -t ./result/docker-compose.test.yml up
 
-#jobs: 
-#  -
-#    name: Login to DockerHub
-#    uses: docker/login-action@v1 
-#    with:
-#      username: ${{ secrets.DOCKERHUB_USERNAME }}
-#      password: ${{ secrets.DOCKERHUB_TOKEN }}
-#  -
-#    name: Build and push
-#    id: docker_build
-#    uses: docker/build-push-action@v2
-#    with:
-#      push: true
-#      tags: user/app:latest
-#      build-args: |
-#        arg1=value1
-#        arg2=value2
-#  -
-#    name: Image digest
-#    run: echo ${{ steps.docker_build.outputs.digest }}
-#
-#'''
+  pushing:
+    name: Push in DockerHub
+    runs-on: ubuntu-latest
+    needs: testing
+    steps:
+      - name: Push Result
+      run: docker push santiagomerlo/result:latest
+      - name: Push Vote
+      run: docker push santiagomerlo/vote:latest
+      - name: Push Worker
+      run: docker push santiagomerlo/worker:latest
+
