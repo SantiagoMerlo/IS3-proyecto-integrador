@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Testin Results
-        run: docker-compose -t ./result/docker-compose.test.yml up
+        run: docker-compose -f ./result/docker-compose.test.yml up
 
   pushing:
     name: Push in DockerHub
