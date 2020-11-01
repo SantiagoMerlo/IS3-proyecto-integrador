@@ -30,9 +30,9 @@ jobs:
     name: Testing Containers
     runs-on: ubuntu-latest
     needs: building
-      steps:
-        - name: Testin Results
-        - run: docker-compose -t ./result/docker-compose.test.yml up
+    steps:
+      - name: Testin Results
+      - run: docker-compose -t ./result/docker-compose.test.yml up
 
   pushing:
     name: Push in DockerHub
