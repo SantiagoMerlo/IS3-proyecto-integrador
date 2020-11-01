@@ -40,9 +40,9 @@ jobs:
     needs: testing
     steps:
       - name: Push Result
-      run: docker push santiagomerlo/result:latest
+      - run: docker push santiagomerlo/result:latest
       - name: Push Vote
-      run: docker push santiagomerlo/vote:latest
+      - run: docker push santiagomerlo/vote:latest
       - name: Push Worker
-      run: docker push santiagomerlo/worker:latest
+      - run: docker push santiagomerlo/worker:latest
 
