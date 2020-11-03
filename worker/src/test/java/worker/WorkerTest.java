@@ -1,9 +1,29 @@
 package worker;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+
 import org.junit.*;
-import static org.mockito.*;
+import org.mockito.*;
+
+import redis.clients.jedis.Jedis;
 
 public class WorkerTest {
+    
+    @Test
+    static void validateConnectionTest(String host){
+        String connstr = Worker.getConnectionString(host);
+        assertEquals("jdbc:postgresql://db/postgres", connstr );
+    }
 
-    // TODO:
+    @Test
+    static void JedisHostTest(String host){
+        assertEquals(new Jedis(host), Worker.JedisHost(host));
+    }
+
+    //@Test
+    //static void ConnectToDBTest(){
+    //    Jedis conn = mock(Jedis.class);
+    //    Assert(Worker
+    //}
 }

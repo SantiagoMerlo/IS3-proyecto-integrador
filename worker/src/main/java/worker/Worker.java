@@ -8,7 +8,8 @@ import org.json.JSONObject;
 class Worker {
   public static void main(String[] args) {
     try {
-      Jedis redis = connectToRedis("redis");
+
+      Jedis redis = connectToRedis(JedisHost("redis"));
       Connection dbConn = connectToDB("db");
 
       System.err.println("Watching vote queue");
@@ -45,8 +46,7 @@ class Worker {
     }
   }
 
-  static Jedis connectToRedis(String host) {
-    Jedis conn = new Jedis(host);
+  static Jedis connectToRedis(Jedis conn) {
 
     while (true) {
       try {
@@ -62,13 +62,19 @@ class Worker {
     return conn;
   }
 
+  public static Jedis JedisHost(String host) {
+    return (host == "redis") ? new Jedis(host) : new Jedis();
+  }
+
   static Connection connectToDB(String host) throws SQLException {
+
     Connection conn = null;
 
     try {
 
       Class.forName("org.postgresql.Driver");
-      String url = "jdbc:postgresql://" + host + "/postgres";
+
+      String url = getConnectionString(host);
 
       while (conn == null) {
         try {
@@ -90,6 +96,10 @@ class Worker {
 
     System.err.println("Connected to db");
     return conn;
+  }
+
+  public static String getConnectionString(String host) {
+    return "jdbc:postgresql://" + host + "/postgres";
   }
 
   static void sleep(long duration) {
