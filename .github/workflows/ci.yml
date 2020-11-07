@@ -30,6 +30,7 @@ jobs:
   #  - name: Push Worker
   #    run: docker push santiagomerlo/worker:latest
   #Testing:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
