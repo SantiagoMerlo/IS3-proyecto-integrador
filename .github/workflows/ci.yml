@@ -19,14 +19,14 @@ jobs:
     - uses: actions/checkout@master
     - name: Building
       run: |
-      docker build -t santiagomerlo/result:latest ./result
-      docker build -t santiagomerlo/vote:latest ./vote
-      docker build -t santiagomerlo/worker:latest ./worker
+        docker build -t santiagomerlo/result:latest ./result
+        docker build -t santiagomerlo/vote:latest ./vote
+        docker build -t santiagomerlo/worker:latest ./worker
     - name: Pushing 
       run: |
-      docker push santiagomerlo/result:latest
-      docker push santiagomerlo/vote:latest
-      docker push santiagomerlo/worker:latest
+        docker push santiagomerlo/result:latest
+        docker push santiagomerlo/vote:latest
+        docker push santiagomerlo/worker:latest
 #############  TESTING 
 #############  DEPLOY 
   deployWorker:
