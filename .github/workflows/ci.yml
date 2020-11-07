@@ -60,8 +60,8 @@ jobs:
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: |
-      docker tag santiagomerlo/result:latest registry.heroku.com/is3-result/web
-      docker push registry.heroku.com/is3-result/web
+        docker tag santiagomerlo/result:latest registry.heroku.com/is3-result/web
+        docker push registry.heroku.com/is3-result/web
 #    - name: Release
 #      env:
 #        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
