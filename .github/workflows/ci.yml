@@ -19,27 +19,13 @@ jobs:
       name: Deploy Container
       runs-on: ubuntu-latest
       steps:
-          - uses: actions/checkout@master
-          - name: Build Result
-            run: docker build -t santiagomerlo/result:latest ./result
-          - name: Build Vote
-            run: docker build -t santiagomerlo/vote:latest ./vote
-          - name: Build Worker
-            run: docker build -t santiagomerlo/worker:latest ./worker
-  #testing:
-  #  name: Testing Containers
-  #  runs-on: ubuntu-latest
-  #  needs: building
-  #  steps:
-  #    - uses: actions/checkout@master
-  #    - name: Testin Results
-  #      run: docker-compose -f ./result/docker-compose.test.yml up
-  pushing:
-    name: Push in DockerHub
-    runs-on: ubuntu-latest
-    needs: [login, building]
-    steps:
       - uses: actions/checkout@master
+      - name: Build Result
+        run: docker build -t santiagomerlo/result:latest ./result
+      - name: Build Vote
+        run: docker build -t santiagomerlo/vote:latest ./vote
+      - name: Build Worker
+        run: docker build -t santiagomerlo/worker:latest ./worker
       - name: Push Result
         run: docker push santiagomerlo/result:latest
       - name: Push Vote
