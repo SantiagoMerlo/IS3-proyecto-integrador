@@ -5,6 +5,7 @@ on:
     branches: master
 
 jobs:
+#############  BUILDING 
   #dokcer:
   #  name: Docker Build and Push
   #  runs-on: ubuntu-latest
@@ -29,7 +30,10 @@ jobs:
   #    run: docker push santiagomerlo/vote:latest
   #  - name: Push Worker
   #    run: docker push santiagomerlo/worker:latest
-  deploy:
+#############  TESTING 
+#############  DEPLOY 
+  deployResult:
+    name: Deploy Result in Heroku
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -39,10 +43,26 @@ jobs:
           heroku_app_name: 'is3-result'
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
           appdir: "result"
+  deployVote:
+    name: Delpoy Vote in Heroku
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.6.8
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: 'is3-vote'
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          appdir: "vote"
+  deployWorker:
+    name: Delpoy Worker in Heroku
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.6.8
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: 'is3-worker'
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          appdir: "worker"
 
-#    - name: Release
-#      env:
-#        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#      run: heroku container:release -a is3-vote web 
-
-# docker login --username=_ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
