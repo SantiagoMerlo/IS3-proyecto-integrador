@@ -1,8 +1,8 @@
-Feature('RESULT');
+Feature('Result');
 
 //npx codeceptjs run --steps
 
-Scenario('Testing View Result', ({ I }) => {
+Scenario('Testing Result View', ({ I }) => {
     I.amOnPage('https://is3-result.herokuapp.com/')
     I.see('CATS')
     I.see('DOGS')
