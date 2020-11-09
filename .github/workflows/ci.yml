@@ -48,10 +48,6 @@ jobs:
     #needs: [deployWorker]
     steps:
       - uses: actions/checkout@v2
-      - name: Docker Build
-        run: |
-          docker build -t santiagomerlo/vote:latest ./vote
-          docker run -p 5000:5000 santiagomerlo/vote:latest
       - name: Login to Heroku Container registry
         env: 
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
