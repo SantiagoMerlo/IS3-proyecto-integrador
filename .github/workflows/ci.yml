@@ -52,7 +52,6 @@ jobs:
         run: |
           docker build -t santiagomerlo/vote:latest ./vote
           docker run -p 5000:5000 santiagomerlo/vote:latest
-          docker ps
       - name: Login to Heroku Container registry
         env: 
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
@@ -60,7 +59,9 @@ jobs:
       - name: Build and Push
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:push -a is3-vote web
+        run: |
+          cd ./vote
+          heroku container:push -a is3-vote web
       - name: Release
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
