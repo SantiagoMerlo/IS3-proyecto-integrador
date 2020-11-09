@@ -65,18 +65,32 @@ jobs:
           heroku_app_name: 'is3-result'
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
           appdir: "result"
-  integrationTest:
-    name: Test Case
+  #integrationTest:
+  #  name: Test Case
+  #  runs-on: ubuntu-latest
+  #  needs: [deployResult, deployVote, deployWorker]
+  #  steps:
+  #    - uses: actions/checkout@v2
+  #    - name: Building
+  #    - run: |
+  #      cd ./integration-test
+  #      npm install
+  #    - name: testing
+  #    - run: |
+  #      npx codeceptjs run --steps
+  sonarcloud:
     runs-on: ubuntu-latest
-    needs: [deployResult, deployVote, deployWorker]
+    needs: [docker]
     steps:
-      - uses: actions/checkout@v2
-      - name: Building
-      - run: |
-        cd ./integration-test
-        npm install
-      - name: testing
-      - run: |
-        npx codeceptjs run --steps
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      with:
+        projectBaseDir: './result'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 
