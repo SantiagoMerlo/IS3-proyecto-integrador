@@ -6,6 +6,11 @@
   <artifactId>worker</artifactId>
   <version>1.0-SNAPSHOT</version>
 
+  <properties>
+    <sonar.projectKey>SantiagoMerlo_IS3-proyecto-integrador</sonar.projectKey>
+    <sonar.organization>santiagomerlo-1</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+  </properties>
 
   <dependencies>
     <dependency>
