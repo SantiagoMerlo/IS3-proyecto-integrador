@@ -9,7 +9,7 @@ exports.config = {
   output: './output',
   helpers: {
     Playwright: {
-      url: 'http://localhost',
+      url: '',
       show: true,
       browser: 'chromium'
     }

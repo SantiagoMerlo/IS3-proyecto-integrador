@@ -13,7 +13,14 @@ app = Flask(__name__)
 
 def get_redis():
     if not hasattr(g, 'redis'):
-        g.redis = Redis(host="redis", db=0, socket_timeout=5)
+        try:
+            g.redis = Redis(
+            host='redis-17663.c16.us-east-1-3.ec2.cloud.redislabs.com', 
+            port='17663',
+            password='0g4WbPSX6ilxJRBkMBmYIWNS2D8I7ShZ',
+            socket_timeout=5)
+        except:
+            return 'Fail Database Conection'
     return g.redis
 
 @app.route("/", methods=['POST','GET'])
