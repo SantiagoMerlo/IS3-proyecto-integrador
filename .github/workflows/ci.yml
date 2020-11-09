@@ -45,7 +45,7 @@ jobs:
   deployVote:
     name: Delpoy Vote in Heroku
     runs-on: ubuntu-latest
-    needs: [deployWorker]
+    #needs: [deployWorker]
     steps:
       - uses: actions/checkout@v2
       - name: Docker Build

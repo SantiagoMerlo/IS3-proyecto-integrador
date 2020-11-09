@@ -8,6 +8,7 @@ import json
 option_a = os.getenv('OPTION_A', "Cats")
 option_b = os.getenv('OPTION_B', "Dogs")
 hostname = socket.gethostname()
+port = int(os.environ.get("PORT", 5000))
 
 app = Flask(__name__)
 
@@ -49,4 +50,4 @@ def hello():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', threaded=True, port=5000)
+    app.run(host='0.0.0.0', threaded=True, port=port)
