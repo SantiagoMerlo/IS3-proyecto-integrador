@@ -5,28 +5,28 @@ on:
     branches: master
 
 jobs:
-#############  BUILDING 
-#  docker:
-#    name: Docker Build and Push
-#    runs-on: ubuntu-latest
-#    steps:
-#    - uses: actions/checkout@master
-#    - name: Docker Login
-#      env:
-#        DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
-#        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-#      run: docker login -u $DOCKER_USER -p $DOCKERHUB_PASSWORD
-#    - uses: actions/checkout@master
-#    - name: Building
-#      run: |
-#        docker build -t santiagomerlo/result:latest ./result
-#        docker build -t santiagomerlo/vote:latest ./vote
-#        docker build -t santiagomerlo/worker:latest ./worker
-#    - name: Pushing 
-#      run: |
-#        docker push santiagomerlo/result:latest
-#        docker push santiagomerlo/vote:latest
-#        docker push santiagomerlo/worker:latest
+############  BUILDING 
+  docker:
+    name: Docker Build and Push
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Docker Login
+      env:
+        DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+      run: docker login -u $DOCKER_USER -p $DOCKERHUB_PASSWORD
+    - uses: actions/checkout@master
+    - name: Building
+      run: |
+        docker build -t santiagomerlo/result:latest ./result
+        docker build -t santiagomerlo/vote:latest ./vote
+        docker build -t santiagomerlo/worker:latest ./worker
+    - name: Pushing 
+      run: |
+        docker push santiagomerlo/result:latest
+        docker push santiagomerlo/vote:latest
+        docker push santiagomerlo/worker:latest
 ############# UNIT TESTING JAVA
 ############# UNIT TESTING PYTHON
 #############  DEPLOY 
@@ -43,7 +43,7 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          cd ./vote
+          cd ./worker
           heroku container:push -a is3-worker web
       - name: Release
         env:
@@ -81,19 +81,19 @@ jobs:
           heroku_app_name: 'is3-result'
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
           appdir: "result"
-  #integrationTest:
-  #  name: Test Case
-  #  runs-on: ubuntu-latest
-  #  needs: [deployResult, deployVote, deployWorker]
-  #  steps:
-  #    - uses: actions/checkout@v2
-  #    - name: Building
-  #    - run: |
-  #      cd ./integration-test
-  #      npm install
-  #    - name: testing
-  #    - run: |
-  #      npx codeceptjs run --steps
+  integrationTest:
+    name: Test Case
+    runs-on: ubuntu-latest
+    needs: [deployResult, deployVote, deployWorker]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Building
+        run: |
+          cd ./integration-test
+          npm install
+      - name: testing
+        run: |
+          npx codeceptjs run --steps
   #SonarCloud:
   #  name: Build
   #  runs-on: ubuntu-latest
