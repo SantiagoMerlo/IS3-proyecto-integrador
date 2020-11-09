@@ -93,6 +93,7 @@ jobs:
           npm install
       - name: testing
         run: |
+          npx codeceptjs init
           npx codeceptjs run --steps
   #SonarCloud:
   #  name: Build
