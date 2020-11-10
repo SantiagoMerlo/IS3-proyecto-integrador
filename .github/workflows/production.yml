@@ -83,7 +83,7 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          cd ./vote
+          cd ./result
           heroku container:push -a is3-result web
       - name: Release
         env:
