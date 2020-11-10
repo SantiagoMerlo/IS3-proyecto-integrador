@@ -10,7 +10,10 @@ class Worker {
   public static void main(String[] args) {
     try {
 
-      Jedis redis = connectToRedis(JedisHost(System.getenv("REDIS_HOST")));
+      Jedis redis = connectToRedis(new Jedis(System.getenv("REDIS_HOST")));
+
+      System.out.println(redisPing(redis));
+
       Connection dbConn = connectToDB(System.getenv("POST_HOST"));
 
       System.err.println("Watching vote queue");
@@ -47,8 +50,11 @@ class Worker {
     }
   }
 
-  static Jedis connectToRedis(Jedis conn) {
+  static String redisPing( Jedis conn) {
+    return "Server is runing:" + conn.ping();
+  }
 
+  static Jedis connectToRedis(Jedis conn) {
     while (true) {
       try {
         conn.keys("*");
@@ -61,10 +67,6 @@ class Worker {
 
     System.err.println("Connected to redis");
     return conn;
-  }
-
-  public static Jedis JedisHost(String host) {
-    return (host == "redis") ? new Jedis(host) : new Jedis();
   }
 
   static Connection connectToDB(String host) throws SQLException {
