@@ -31,12 +31,11 @@ var pool = new pg.Pool({
 });
 
 async.retry(
-  {times: 1000, interval: 1000},
+  {times: 30, interval: 1000},
   function(callback) {
     pool.connect(function(err, client, done) {
       if (err) {
         console.error("Waiting for db");
-        console.error(PORT_URI)
       }
       callback(err, client);
     });

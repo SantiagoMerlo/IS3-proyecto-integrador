@@ -70,17 +70,25 @@ jobs:
     needs: [deployVote]
     steps:
       - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.6.8
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: 'is3-result'
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          appdir: "result"
-          usedocker: true
-          docker_build_args: |
-            POST_URI
+      - name: Login to Heroku Container registry
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login 
+      - name: Setting Vars
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          heroku config:set POST_URI=${{ secrets.POST_URI }} -a is3-result
+      - name: Build and Push
         env:
-          POST_URI: ${{ secrets.POST_URI }}
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          cd ./vote
+          heroku container:push -a is3-result web
+      - name: Release
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release -a is3-result web 
 ############## INTEGRATION TEST
 #  integrationTest:
 #    name: Test Case
