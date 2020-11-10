@@ -15,16 +15,18 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: heroku container:login
       - name: Setting Vars
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          heroku config:set POST_PORT= ${{ secrets.POST_PORT  }}
-          heroku config:set POST_DB= ${{ secrets.POST_DB  }}
-          heroku config:set POST_HOST= ${{ secrets.POST_HOST  }}
-          heroku config:set POST_USER= ${{ secrets.POST_USER  }}
-          heroku config:set POST_PASS= ${{ secrets.POST_PASS  }}
-          heroku config:set POST_URI=  ${{ secrets.POST_URI   }}
-          heroku config:set REDIS_PORT=${{ secrets.REDIS_PORT }}
-          heroku config:set REDIS_HOST=${{ secrets.REDIS_HOST }}
-          heroku config:set REDIS_PASS=${{ secrets.REDIS_PASS }}
+          heroku config:set POST_PORT= ${{ secrets.POST_PORT  }} -a is3-worker
+          heroku config:set POST_DB= ${{ secrets.POST_DB  }} -a is3-worker
+          heroku config:set POST_HOST= ${{ secrets.POST_HOST  }} -a is3-worker
+          heroku config:set POST_USER= ${{ secrets.POST_USER  }} -a is3-worker
+          heroku config:set POST_PASS= ${{ secrets.POST_PASS  }} -a is3-worker
+          heroku config:set POST_URI=  ${{ secrets.POST_URI   }} -a is3-worker
+          heroku config:set REDIS_PORT=${{ secrets.REDIS_PORT }} -a is3-worker
+          heroku config:set REDIS_HOST=${{ secrets.REDIS_HOST }} -a is3-worker
+          heroku config:set REDIS_PASS=${{ secrets.REDIS_PASS }} -a is3-worker
       - name: Build and Push
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
@@ -46,10 +48,12 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: heroku container:login 
       - name: Setting Vars
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          heroku config:set REDIS_PORT=${{ secrets.REDIS_PORT }}
-          heroku config:set REDIS_HOST=${{ secrets.REDIS_HOST }}
-          heroku config:set REDIS_PASS=${{ secrets.REDIS_PASS }}
+          heroku config:set REDIS_PORT=${{ secrets.REDIS_PORT }} -a is3-vote
+          heroku config:set REDIS_HOST=${{ secrets.REDIS_HOST }} -a is3-vote
+          heroku config:set REDIS_PASS=${{ secrets.REDIS_PASS }} -a is3-vote
       - name: Build and Push
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
