@@ -5,7 +5,7 @@ const { setHeadlessWhen } = require('@codeceptjs/configure');
 setHeadlessWhen(process.env.HEADLESS);
 
 exports.config = {
-  tests: './test_case/*_test.js',
+  tests: './*_test.js',
   output: './output',
   helpers: {
     Playwright: {

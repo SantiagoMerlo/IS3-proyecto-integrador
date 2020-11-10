@@ -6,11 +6,12 @@ import java.sql.*;
 import org.json.JSONObject;
 
 class Worker {
+
   public static void main(String[] args) {
     try {
 
-      Jedis redis = connectToRedis(JedisHost("redis"));
-      Connection dbConn = connectToDB("db");
+      Jedis redis = connectToRedis(JedisHost(System.getenv("REDIS_HOST")));
+      Connection dbConn = connectToDB(System.getenv("POST_HOST"));
 
       System.err.println("Watching vote queue");
 
@@ -78,7 +79,7 @@ class Worker {
 
       while (conn == null) {
         try {
-          conn = DriverManager.getConnection(url, "postgres", "postgres");
+          conn = DriverManager.getConnection(url, System.getenv("POST_USER"), System.getenv("POST_PASS"));
         } catch (SQLException e) {
           System.err.println("Waiting for db");
           sleep(1000);
@@ -99,7 +100,7 @@ class Worker {
   }
 
   public static String getConnectionString(String host) {
-    return "jdbc:postgresql://" + host + "/postgres";
+    return "jdbc:postgresql://" + host + ":" + System.getenv("POST_PORT") + "/" + System.getenv("POST_DB");
   }
 
   static void sleep(long duration) {

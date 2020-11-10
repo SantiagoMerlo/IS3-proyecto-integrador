@@ -8,7 +8,10 @@ import json
 option_a = os.getenv('OPTION_A', "Cats")
 option_b = os.getenv('OPTION_B', "Dogs")
 hostname = socket.gethostname()
-port = int(os.environ.get("PORT", 5000))
+PORT = int(os.environ.get("PORT", 5000))
+REDIS_PORT = os.environ['REDIS_PORT']
+REDIS_HOST = os.environ['REDIS_HOST']
+REDIS_PASS = os.environ['REDIS_PASS']
 
 app = Flask(__name__)
 
@@ -16,9 +19,9 @@ def get_redis():
     if not hasattr(g, 'redis'):
         try:
             g.redis = Redis(
-            host='redis-17663.c16.us-east-1-3.ec2.cloud.redislabs.com', 
-            port='17663',
-            password='0g4WbPSX6ilxJRBkMBmYIWNS2D8I7ShZ',
+            host=REDIS_HOST, 
+            port=REDIS_PORT,
+            password=REDIS_PASS,
             socket_timeout=5)
         except:
             return 'Fail Database Conection'
@@ -50,4 +53,4 @@ def hello():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', threaded=True, port=port)
+    app.run(host='0.0.0.0', threaded=True, port=PORT)
