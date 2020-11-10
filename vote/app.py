@@ -30,7 +30,7 @@ def get_redis(REDIS_HOST, REDIS_PASS, REDIS_PORT):
     return g.redis
 
 @app.route("/", methods=['POST', 'GET'])
-def hello():
+def app():
     voter_id = get_voter(request.cookies.get('voter_id'))
 
     vote = count_vote(None, voter_id)
@@ -45,10 +45,7 @@ def hello():
     resp.set_cookie('voter_id', voter_id)
     return resp
 
-
-@app.route("/", methods=['POST', 'GET'])
 def count_vote(vote, voter_id):
-
     if request.method == 'POST':
         redis = get_redis(REDIS_HOST=REDIS_HOST, REDIS_PASS=REDIS_PASS, REDIS_PORT=REDIS_PORT)
         vote = request.form['vote']
@@ -56,8 +53,6 @@ def count_vote(vote, voter_id):
         redis.rpush('votes', data)
     return vote
 
-
-@app.route("/", methods=['POST', 'GET'])
 def get_voter(voter_id):
     voter_id = voter_id
     if not voter_id:
