@@ -13,6 +13,8 @@ REDIS_PORT = os.environ['REDIS_PORT']
 REDIS_HOST = os.environ['REDIS_HOST']
 REDIS_PASS = os.environ['REDIS_PASS']
 
+print(REDIS_HOST)
+
 app = Flask(__name__)
 
 def get_redis():
