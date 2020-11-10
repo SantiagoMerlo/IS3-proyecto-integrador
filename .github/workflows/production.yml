@@ -75,8 +75,8 @@ jobs:
           usedocker: true
           docker_build_args: |
             POST_URI
-          env:
-            POST_URI: ${{ secrets.POST_URI }}
+        env:
+          POST_URI: ${{ secrets.POST_URI }}
 ############## INTEGRATION TEST
 #  integrationTest:
 #    name: Test Case
