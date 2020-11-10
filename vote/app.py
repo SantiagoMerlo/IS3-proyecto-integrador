@@ -15,7 +15,7 @@ REDIS_PASS = os.environ['REDIS_PASS']
 
 app = Flask(__name__)
 
-def get_redis():
+def get_redis(REDIS_HOST, REDIS_PASS, REDIS_PORT):
     if not hasattr(g, 'redis'):
         try:
             g.redis = Redis(
@@ -23,24 +23,17 @@ def get_redis():
                 port=REDIS_PORT,
                 password=REDIS_PASS,
                 socket_timeout=5)
-        except ValueError:
-            print('Fail Database Conection')
-            return
+        except Exception as ex:
+            print('Error:', ex)
+            #exit('Failed to connect, terminating.')
+            g.redis = None
     return g.redis
 
-@app.route("/", methods=['POST','GET'])
+@app.route("/", methods=['POST', 'GET'])
 def hello():
-    voter_id = request.cookies.get('voter_id')
-    if not voter_id:
-        voter_id = hex(random.getrandbits(64))[2:-1]
+    voter_id = get_voter(request.cookies.get('voter_id'))
 
-    vote = None
-
-    if request.method == 'POST':
-        redis = get_redis()
-        vote = request.form['vote']
-        data = json.dumps({'voter_id': voter_id, 'vote': vote})
-        redis.rpush('votes', data)
+    vote = count_vote(None, voter_id)
 
     resp = make_response(render_template(
         'index.html',
@@ -51,6 +44,26 @@ def hello():
     ))
     resp.set_cookie('voter_id', voter_id)
     return resp
+
+
+@app.route("/", methods=['POST', 'GET'])
+def count_vote(vote, voter_id):
+
+    if request.method == 'POST':
+        redis = get_redis(REDIS_HOST=REDIS_HOST, REDIS_PASS=REDIS_PASS, REDIS_PORT=REDIS_PORT)
+        vote = request.form['vote']
+        data = json.dumps({'voter_id': voter_id, 'vote': vote})
+        redis.rpush('votes', data)
+    return vote
+
+
+@app.route("/", methods=['POST', 'GET'])
+def get_voter(voter_id):
+    voter_id = voter_id
+    if not voter_id:
+        print('Usuario nuevo')
+        voter_id = hex(random.getrandbits(64))[2:-1]
+    return voter_id
 
 
 if __name__ == "__main__":
