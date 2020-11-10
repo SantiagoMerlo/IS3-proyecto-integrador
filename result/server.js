@@ -15,6 +15,8 @@ io.set('transports', ['polling']);
 var port = process.env.PORT || 4000;
 var POST_URI = process.env.POST_URI || 'postgres://postgres:postgres@db/postgres';
 
+
+
 io.sockets.on('connection', function (socket) {
 
   socket.emit('message', { text : 'Welcome!' });
@@ -34,6 +36,7 @@ async.retry(
     pool.connect(function(err, client, done) {
       if (err) {
         console.error("Waiting for db");
+        console.error(PORT_URI)
       }
       callback(err, client);
     });
