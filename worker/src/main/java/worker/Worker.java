@@ -7,14 +7,37 @@ import org.json.JSONObject;
 
 class Worker {
 
+  private static String DB_URL = "postgres://uzmqbqluddcolu:2a2fc77c8108ef5b4fce2e77d8742c577641a3c9952dc99b6485ccb7e6d343b4@ec2-18-233-32-61.compute-1.amazonaws.com:5432/d57p3q8jvbo598"; // System.getenv("DATABASE_URL")
+
+  private static String POST_HOST = "ec2-18-233-32-61.compute-1.amazonaws.com"; // System.getenv("REDIS_HOST")
+
+  private static String POST_DB = "d57p3q8jvbo598"; // System.getenv("POST_DB")
+
+  private static String POST_PASS = "2a2fc77c8108ef5b4fce2e77d8742c577641a3c9952dc99b6485ccb7e6d343b4";
+
+  private static String POST_PORT = "5432"; // System.getenv("POST_PORT")
+
+  private static String POST_URI = "postgres://uzmqbqluddcolu:2a2fc77c8108ef5b4fce2e77d8742c577641a3c9952dc99b6485ccb7e6d343b4@ec2-18-233-32-61.compute-1.amazonaws.com:5432/d57p3q8jvbo598"; // System.getenv("POST_URI")
+
+  private static String POST_USER = "uzmqbqluddcolu"; // System.getenv("POST_USER")
+
+  private static String REDIS_HOST = "redis-17663.c16.us-east-1-3.ec2.cloud.redislabs.com"; //System.getenv("REDIS_HOST")
+
+  private static String REDIS_PASS = "0g4WbPSX6ilxJRBkMBmYIWNS2D8I7ShZ";// System.getenv("REDIS_PASS")
+  
+  private static String REDIS_PORT = "17663"; // System.getenv("REDIS_PORT")
   public static void main(String[] args) {
     try {
 
-      Jedis redis = connectToRedis(new Jedis(System.getenv("REDIS_HOST")));
+      String URL_Redis = strConnectionRedis();
 
-      System.out.println(redisPing(redis));
+      Jedis redis = connectToRedis(new Jedis(URL_Redis));
 
-      Connection dbConn = connectToDB(System.getenv("POST_HOST"));
+      String ping = redisPing(redis);
+
+      System.out.println(ping);
+
+      Connection dbConn = connectToDB();
 
       System.err.println("Watching vote queue");
 
@@ -54,6 +77,10 @@ class Worker {
     return "Server is runing:" + conn.ping();
   }
 
+  public static String strConnectionRedis(){
+    return "redis://default:" + REDIS_PASS + "@" + REDIS_HOST + ":" + REDIS_PORT;
+  }
+
   static Jedis connectToRedis(Jedis conn) {
     while (true) {
       try {
@@ -69,7 +96,7 @@ class Worker {
     return conn;
   }
 
-  static Connection connectToDB(String host) throws SQLException {
+  static Connection connectToDB() throws SQLException {
 
     Connection conn = null;
 
@@ -77,11 +104,15 @@ class Worker {
 
       Class.forName("org.postgresql.Driver");
 
-      String url = getConnectionString(host);
+      String url = strConnectionPostgres();
+
+      System.err.println(url);
 
       while (conn == null) {
         try {
-          conn = DriverManager.getConnection(url, System.getenv("POST_USER"), System.getenv("POST_PASS"));
+
+          conn = DriverManager.getConnection(url, POST_USER, POST_PASS);
+
         } catch (SQLException e) {
           System.err.println("Waiting for db");
           sleep(1000);
@@ -101,9 +132,11 @@ class Worker {
     return conn;
   }
 
-  public static String getConnectionString(String host) {
-    return "jdbc:postgresql://" + host + ":" + System.getenv("POST_PORT") + "/" + System.getenv("POST_DB");
+  public static String strConnectionPostgres() {
+    return "jdbc:postgresql://" + POST_HOST + ":" + POST_PORT + "/" + POST_DB;
   }
+
+
 
   static void sleep(long duration) {
     try {
