@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 class Worker {
 
-  private static String POST_HOST = System.getenv("REDIS_HOST");
+  private static String POST_HOST = System.getenv("POST_HOST");
 
   private static String POST_DB = System.getenv("POST_DB");
 
@@ -102,7 +102,7 @@ class Worker {
 
       String url = strConnectionPostgres();
 
-      System.err.printf(url);
+      //System.err.printf(url);
 
       while (conn == null) {
         try {
