@@ -2,6 +2,7 @@ package worker;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisConnectionException;
+
 import java.sql.*;
 import org.json.JSONObject;
 
@@ -106,18 +107,7 @@ class Worker {
 
       String url = strConnectionPostgres();
 
-      System.err.println(url);
-
-      while (conn == null) {
-        try {
-
-          conn = DriverManager.getConnection(url, POST_USER, POST_PASS);
-
-        } catch (SQLException e) {
-          System.err.println("Waiting for db");
-          sleep(1000);
-        }
-      }
+      conn = DriverManager.getConnection(url);
 
       PreparedStatement st = conn.prepareStatement(
         "CREATE TABLE IF NOT EXISTS votes (id VARCHAR(255) NOT NULL UNIQUE, vote VARCHAR(255) NOT NULL)");
@@ -133,7 +123,7 @@ class Worker {
   }
 
   public static String strConnectionPostgres() {
-    return "jdbc:postgresql://" + POST_HOST + ":" + POST_PORT + "/" + POST_DB;
+    return "jdbc:postgresql://" + POST_HOST + ":" + POST_PORT + "/" + POST_DB + "?user=" + POST_USER + "&password=" + POST_PASS;
   }
 
 
