@@ -9,9 +9,9 @@ option_a = os.getenv('OPTION_A', "Cats")
 option_b = os.getenv('OPTION_B', "Dogs")
 hostname = socket.gethostname()
 PORT = int(os.environ.get("PORT", 5000))
-REDIS_PORT = os.environ['REDIS_PORT']
-REDIS_HOST = os.environ['REDIS_HOST']
-REDIS_PASS = os.environ['REDIS_PASS']
+REDIS_PORT = 17663 #os.environ['REDIS_PORT'] 
+REDIS_HOST = "redis-17663.c16.us-east-1-3.ec2.cloud.redislabs.com" #os.environ['REDIS_HOST']
+REDIS_PASS = "0g4WbPSX6ilxJRBkMBmYIWNS2D8I7ShZ" #os.environ['REDIS_PASS']
 
 app = Flask(__name__)
 
@@ -25,12 +25,11 @@ def get_redis(REDIS_HOST, REDIS_PASS, REDIS_PORT):
                 socket_timeout=5)
         except Exception as ex:
             print('Error:', ex)
-            #exit('Failed to connect, terminating.')
             g.redis = None
     return g.redis
 
 @app.route("/", methods=['POST', 'GET'])
-def app():
+def hello():
     voter_id = get_voter(request.cookies.get('voter_id'))
 
     vote = count_vote(None, voter_id)
@@ -45,7 +44,6 @@ def app():
     resp.set_cookie('voter_id', voter_id)
     return resp
 
-@app.route("/", methods=['POST', 'GET'])
 def count_vote(vote, voter_id):
     if request.method == 'POST':
         redis = get_redis(REDIS_HOST=REDIS_HOST, REDIS_PASS=REDIS_PASS, REDIS_PORT=REDIS_PORT)
@@ -54,7 +52,6 @@ def count_vote(vote, voter_id):
         redis.rpush('votes', data)
     return vote
 
-@app.route("/", methods=['POST', 'GET'])
 def get_voter(voter_id):
     voter_id = voter_id
     if not voter_id:
