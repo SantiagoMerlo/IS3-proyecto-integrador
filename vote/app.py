@@ -45,6 +45,7 @@ def app():
     resp.set_cookie('voter_id', voter_id)
     return resp
 
+@app.route("/", methods=['POST', 'GET'])
 def count_vote(vote, voter_id):
     if request.method == 'POST':
         redis = get_redis(REDIS_HOST=REDIS_HOST, REDIS_PASS=REDIS_PASS, REDIS_PORT=REDIS_PORT)
@@ -53,6 +54,7 @@ def count_vote(vote, voter_id):
         redis.rpush('votes', data)
     return vote
 
+@app.route("/", methods=['POST', 'GET'])
 def get_voter(voter_id):
     voter_id = voter_id
     if not voter_id:
