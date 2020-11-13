@@ -1,0 +1,38 @@
+name: WorkerCI
+
+on:
+  push:
+    branches: worker
+jobs:
+  deployWorker:
+    name: Deploy Worker in Heroku
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to Heroku Container registry
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
+      - name: Setting Vars
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          heroku config:set POST_PORT=${{ secrets.POST_PORT  }} -a is3-worker
+          heroku config:set POST_DB=${{ secrets.POST_DB  }} -a is3-worker
+          heroku config:set POST_HOST=${{ secrets.POST_HOST  }} -a is3-worker
+          heroku config:set POST_USER=${{ secrets.POST_USER  }} -a is3-worker
+          heroku config:set POST_PASS=${{ secrets.POST_PASS  }} -a is3-worker
+          heroku config:set POST_URI=${{ secrets.POST_URI   }} -a is3-worker
+          heroku config:set REDIS_PORT=${{ secrets.REDIS_PORT }} -a is3-worker
+          heroku config:set REDIS_HOST=${{ secrets.REDIS_HOST }} -a is3-worker
+          heroku config:set REDIS_PASS=${{ secrets.REDIS_PASS }} -a is3-worker
+      - name: Build and Push
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          cd ./worker
+          heroku container:push -a is3-worker web
+      - name: Release
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release -a is3-worker web 

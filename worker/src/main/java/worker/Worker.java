@@ -102,7 +102,16 @@ class Worker {
 
       String url = strConnectionPostgres();
 
-      conn = DriverManager.getConnection(url);
+      System.err.printf(url);
+
+      while (conn == null) {
+        try {
+          conn = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+          System.err.println("Waiting for db");
+          sleep(1000);
+        }
+      }
 
       PreparedStatement st = conn.prepareStatement(
           "CREATE TABLE IF NOT EXISTS votes (id VARCHAR(255) NOT NULL UNIQUE, vote VARCHAR(255) NOT NULL)");
