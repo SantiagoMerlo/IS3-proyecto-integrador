@@ -100,4 +100,6 @@ jobs:
           cd ./integration-test
           npm install
       - name: testing
-        run: npm run codeceptjs
+        run: |
+        cd ./integration-test
+        npm run codeceptjs
