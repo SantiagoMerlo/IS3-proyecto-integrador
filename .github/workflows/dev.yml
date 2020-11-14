@@ -26,8 +26,6 @@ jobs:
         docker push santiagomerlo/result:latest
         docker push santiagomerlo/vote:latest
         docker push santiagomerlo/worker:latest
-############# UNIT TESTING JAVA
-############# UNIT TESTING PYTHON
   unit_test_vote:
     name: Unit Test with Python
     runs-on: ubuntu-latest
@@ -53,11 +51,6 @@ jobs:
         with:
           name: Unit Test Results (Python ${{ matrix.python-version }})
           path: pytest.xml
-      - uses: 5monkeys/cobertura-action@master
-        with:
-          path: ./pytest.xml
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          minimum_coverage: 75
   #SonarCloud:
   #  name: Build
   #  runs-on: ubuntu-latest
