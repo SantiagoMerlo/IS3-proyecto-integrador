@@ -10,7 +10,7 @@ exports.config = {
   helpers: {
     Playwright: {
       url: '',
-      show: true,
+      show: false,
       browser: 'chromium'
     }
   },

@@ -166,7 +166,7 @@ jobs:
 #          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 #        run: heroku container:release -a is3-result web 
   integrationTest:
-    name: Test Case
+    name: Integration Test
     runs-on: ubuntu-latest
 #    needs: [deployResult, deployVote, deployWorker]
     steps:
