@@ -5,184 +5,186 @@ on:
     branches: master
 
 jobs:
-  #docker:
-  #  name: Docker Build and Push
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #  - uses: actions/checkout@master
-  #  - name: Docker Login
-  #    env:
-  #      DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
-  #      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-  #    run: docker login -u $DOCKER_USER -p $DOCKERHUB_PASSWORD
-  #  - uses: actions/checkout@master
-  #  - name: Building
-  #    run: |
-  #      docker build -t santiagomerlo/result:latest ./result
-  #      docker build -t santiagomerlo/vote:latest ./vote
-  #      docker build -t santiagomerlo/worker:latest ./worker
-  #  - name: Pushing 
-  #    run: |
-  #      docker push santiagomerlo/result:latest
-  #      docker push santiagomerlo/vote:latest
-  #      docker push santiagomerlo/worker:latest
-#  unit_test_vote:
-#    name: Unit Test with Python
-#    runs-on: ubuntu-latest
-#    needs: [docker]
-#    strategy:
-#      matrix:
-#        python-version: [3.7]
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Set up Python
-#        uses: actions/setup-python@v2
-#        with:
-#          python-version: '3.x'
-#      - name: Install dependencies
-#        run: |
-#          cd ./vote
-#          pip install -r requirements.txt
-#      - name: PyTest
-#        run: python -m pytest ./vote/test --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
-#
-#      - name: Upload Unit Test Results
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: Unit Test Results (Python ${{ matrix.python-version }})
-#          path: junit/test-results.xml
-#        if: ${{ always() }}
-#      - name: Publish Unit Test Results
-#        uses: EnricoMi/publish-unit-test-result-action@v1.4
-#        if: ${{ always() }}
-#        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          check_name: Unit Test Results
-#          comment_title: Unit Test Statistics
-#          hide_comments: all but latest
-#          comment_on_pr: true
-#          files: junit/test-results.xml
-#          report_individual_runs: true
-#          deduplicate_classes_by_file_name: false
+  docker:
+    name: Docker Build and Push
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Docker Login
+      env:
+        DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+      run: docker login -u $DOCKER_USER -p $DOCKERHUB_PASSWORD
+    - uses: actions/checkout@master
+    - name: Building
+      run: |
+        docker build -t santiagomerlo/result:latest ./result
+        docker build -t santiagomerlo/vote:latest ./vote
+        docker build -t santiagomerlo/worker:latest ./worker
+    - name: Pushing 
+      run: |
+        docker push santiagomerlo/result:latest
+        docker push santiagomerlo/vote:latest
+        docker push santiagomerlo/worker:latest
+  unit_test_vote:
+    name: Unit Test with Python
+    runs-on: ubuntu-latest
+    needs: [docker]
+    strategy:
+      matrix:
+        python-version: [3.7]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          cd ./vote
+          pip install -r requirements.txt
+      - name: PyTest
+        run: python -m pytest ./vote/test --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+
+      - name: Upload Unit Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Unit Test Results (Python ${{ matrix.python-version }})
+          path: junit/test-results.xml
+        if: ${{ always() }}
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1.4
+        if: ${{ always() }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          check_name: Unit Test Results
+          comment_title: Unit Test Statistics
+          hide_comments: all but latest
+          comment_on_pr: true
+          files: junit/test-results.xml
+          report_individual_runs: true
+          deduplicate_classes_by_file_name: false
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
+    needs: [unit_test_vote]
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#  deployWorker:
-#    name: Deploy Worker in Heroku
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Login to Heroku Container registry
-#        env: 
-#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#        run: heroku container:login
-#      - name: Setting Vars
-#        env: 
-#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#        run: |
-#          heroku config:set POST_PORT=${{ secrets.POST_PORT  }} -a is3-worker
-#          heroku config:set POST_DB=${{ secrets.POST_DB  }} -a is3-worker
-#          heroku config:set POST_HOST=${{ secrets.POST_HOST  }} -a is3-worker
-#          heroku config:set POST_USER=${{ secrets.POST_USER  }} -a is3-worker
-#          heroku config:set POST_PASS=${{ secrets.POST_PASS  }} -a is3-worker
-#          heroku config:set POST_URI=${{ secrets.POST_URI   }} -a is3-worker
-#          heroku config:set REDIS_PORT=${{ secrets.REDIS_PORT }} -a is3-worker
-#          heroku config:set REDIS_HOST=${{ secrets.REDIS_HOST }} -a is3-worker
-#          heroku config:set REDIS_PASS=${{ secrets.REDIS_PASS }} -a is3-worker
-#      - name: Build and Push
-#        env:
-#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#        run: |
-#          cd ./worker
-#          heroku container:push -a is3-worker web
-#      - name: Release
-#        env:
-#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#        run: heroku container:release -a is3-worker web 
-#  deployVote:
-#    name: Delpoy Vote in Heroku
-#    runs-on: ubuntu-latest
-#    needs: [deployWorker]
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Login to Heroku Container registry
-#        env: 
-#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#        run: heroku container:login 
-#      - name: Setting Vars
-#        env: 
-#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#        run: |
-#          heroku config:set REDIS_PORT=${{ secrets.REDIS_PORT }} -a is3-vote
-#          heroku config:set REDIS_HOST=${{ secrets.REDIS_HOST }} -a is3-vote
-#          heroku config:set REDIS_PASS=${{ secrets.REDIS_PASS }} -a is3-vote
-#      - name: Build and Push
-#        env:
-#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#        run: |
-#          cd ./vote
-#          heroku container:push -a is3-vote web
-#      - name: Release
-#        env:
-#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#        run: heroku container:release -a is3-vote web 
-#  deployResult:
-#    name: Deploy Result in Heroku
-#    runs-on: ubuntu-latest
-#    needs: [deployVote]
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Login to Heroku Container registry
-#        env: 
-#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#        run: heroku container:login 
-#      - name: Setting Vars
-#        env: 
-#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#        run: |
-#          heroku config:set POST_URI=${{ secrets.POST_URI }} -a is3-result
-#      - name: Build and Push
-#        env:
-#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#        run: |
-#          cd ./result
-#          heroku container:push -a is3-result web
-#      - name: Release
-#        env:
-#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#        run: heroku container:release -a is3-result web 
-#  integrationTest:
-#    name: Integration Test
-#    runs-on: ubuntu-latest
-#    needs: [deployResult, deployVote, deployWorker]
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Building
-#        run: |
-#          cd ./integration-test
-#          npm install
-#      - name: testing
-#        run: |
-#          cd ./integration-test
-#          npx codeceptjs run --steps --reporter mocha-multi
-#      - name: Publish Integration Test Results
-#        uses: EnricoMi/publish-unit-test-result-action@v1.4
-#        if: ${{ always() }}
-#        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          check_name: Integration Test Result
-#          comment_title: Integration Test Statistics
-#          hide_comments: all but latest
-#          comment_on_pr: true
-#          files: junit/result.xml
-#          report_individual_runs: true
-#          deduplicate_classes_by_file_name: false
+  deployWorker:
+    name: Deploy Worker in Heroku
+    runs-on: ubuntu-latest
+    needs: [docker]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to Heroku Container registry
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
+      - name: Setting Vars
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          heroku config:set POST_PORT=${{ secrets.POST_PORT  }} -a is3-worker
+          heroku config:set POST_DB=${{ secrets.POST_DB  }} -a is3-worker
+          heroku config:set POST_HOST=${{ secrets.POST_HOST  }} -a is3-worker
+          heroku config:set POST_USER=${{ secrets.POST_USER  }} -a is3-worker
+          heroku config:set POST_PASS=${{ secrets.POST_PASS  }} -a is3-worker
+          heroku config:set POST_URI=${{ secrets.POST_URI   }} -a is3-worker
+          heroku config:set REDIS_PORT=${{ secrets.REDIS_PORT }} -a is3-worker
+          heroku config:set REDIS_HOST=${{ secrets.REDIS_HOST }} -a is3-worker
+          heroku config:set REDIS_PASS=${{ secrets.REDIS_PASS }} -a is3-worker
+      - name: Build and Push
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          cd ./worker
+          heroku container:push -a is3-worker web
+      - name: Release
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release -a is3-worker web 
+  deployVote:
+    name: Delpoy Vote in Heroku
+    runs-on: ubuntu-latest
+    needs: [deployWorker]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to Heroku Container registry
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login 
+      - name: Setting Vars
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          heroku config:set REDIS_PORT=${{ secrets.REDIS_PORT }} -a is3-vote
+          heroku config:set REDIS_HOST=${{ secrets.REDIS_HOST }} -a is3-vote
+          heroku config:set REDIS_PASS=${{ secrets.REDIS_PASS }} -a is3-vote
+      - name: Build and Push
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          cd ./vote
+          heroku container:push -a is3-vote web
+      - name: Release
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release -a is3-vote web 
+  deployResult:
+    name: Deploy Result in Heroku
+    runs-on: ubuntu-latest
+    needs: [deployVote]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to Heroku Container registry
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login 
+      - name: Setting Vars
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          heroku config:set POST_URI=${{ secrets.POST_URI }} -a is3-result
+      - name: Build and Push
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          cd ./result
+          heroku container:push -a is3-result web
+      - name: Release
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release -a is3-result web 
+  integrationTest:
+    name: Integration Test
+    runs-on: ubuntu-latest
+    needs: [deployResult, deployVote, deployWorker]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Building
+        run: |
+          cd ./integration-test
+          npm install
+      - name: testing
+        run: |
+          cd ./integration-test
+          npx codeceptjs run --steps --reporter mocha-multi
+      - name: Publish Integration Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1.4
+        if: ${{ always() }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          check_name: Integration Test Result
+          comment_title: Integration Test Statistics
+          hide_comments: all but latest
+          comment_on_pr: true
+          files: junit/result.xml
+          report_individual_runs: true
+          deduplicate_classes_by_file_name: false
