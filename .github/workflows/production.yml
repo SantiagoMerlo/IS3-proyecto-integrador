@@ -3,106 +3,103 @@ name: production
 on:
   push:
     branches: master
-    
+
 jobs:
-#############  DEPLOY 
-  deployWorker:
-    name: Deploy Worker in Heroku
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Login to Heroku Container registry
-        env: 
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:login
-      - name: Setting Vars
-        env: 
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: |
-          heroku config:set POST_PORT=${{ secrets.POST_PORT  }} -a is3-worker
-          heroku config:set POST_DB=${{ secrets.POST_DB  }} -a is3-worker
-          heroku config:set POST_HOST=${{ secrets.POST_HOST  }} -a is3-worker
-          heroku config:set POST_USER=${{ secrets.POST_USER  }} -a is3-worker
-          heroku config:set POST_PASS=${{ secrets.POST_PASS  }} -a is3-worker
-          heroku config:set POST_URI=${{ secrets.POST_URI   }} -a is3-worker
-          heroku config:set REDIS_PORT=${{ secrets.REDIS_PORT }} -a is3-worker
-          heroku config:set REDIS_HOST=${{ secrets.REDIS_HOST }} -a is3-worker
-          heroku config:set REDIS_PASS=${{ secrets.REDIS_PASS }} -a is3-worker
-      - name: Build and Push
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: |
-          cd ./worker
-          heroku container:push -a is3-worker web
-      - name: Release
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:release -a is3-worker web 
-  deployVote:
-    name: Delpoy Vote in Heroku
-    runs-on: ubuntu-latest
-    needs: [deployWorker]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Login to Heroku Container registry
-        env: 
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:login 
-      - name: Setting Vars
-        env: 
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: |
-          heroku config:set REDIS_PORT=${{ secrets.REDIS_PORT }} -a is3-vote
-          heroku config:set REDIS_HOST=${{ secrets.REDIS_HOST }} -a is3-vote
-          heroku config:set REDIS_PASS=${{ secrets.REDIS_PASS }} -a is3-vote
-      - name: Build and Push
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: |
-          cd ./vote
-          heroku container:push -a is3-vote web
-      - name: Release
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:release -a is3-vote web 
-  deployResult:
-    name: Deploy Result in Heroku
-    runs-on: ubuntu-latest
-    needs: [deployVote]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Login to Heroku Container registry
-        env: 
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:login 
-      - name: Setting Vars
-        env: 
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: |
-          heroku config:set POST_URI=${{ secrets.POST_URI }} -a is3-result
-      - name: Build and Push
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: |
-          cd ./result
-          heroku container:push -a is3-result web
-      - name: Release
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:release -a is3-result web 
-############## INTEGRATION TEST
-#  integrationTest:
-#    name: Test Case
+#  deployWorker:
+#    name: Deploy Worker in Heroku
 #    runs-on: ubuntu-latest
-#    needs: [deployResult, deployVote, deployWorker]
 #    steps:
 #      - uses: actions/checkout@v2
-#      - name: Building
+#      - name: Login to Heroku Container registry
+#        env: 
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#        run: heroku container:login
+#      - name: Setting Vars
+#        env: 
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 #        run: |
-#          cd ./integration-test
-#          npm install
-#      - name: testing
+#          heroku config:set POST_PORT=${{ secrets.POST_PORT  }} -a is3-worker
+#          heroku config:set POST_DB=${{ secrets.POST_DB  }} -a is3-worker
+#          heroku config:set POST_HOST=${{ secrets.POST_HOST  }} -a is3-worker
+#          heroku config:set POST_USER=${{ secrets.POST_USER  }} -a is3-worker
+#          heroku config:set POST_PASS=${{ secrets.POST_PASS  }} -a is3-worker
+#          heroku config:set POST_URI=${{ secrets.POST_URI   }} -a is3-worker
+#          heroku config:set REDIS_PORT=${{ secrets.REDIS_PORT }} -a is3-worker
+#          heroku config:set REDIS_HOST=${{ secrets.REDIS_HOST }} -a is3-worker
+#          heroku config:set REDIS_PASS=${{ secrets.REDIS_PASS }} -a is3-worker
+#      - name: Build and Push
+#        env:
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 #        run: |
-#          npx codeceptjs init
-#          npx codeceptjs run --steps
-
+#          cd ./worker
+#          heroku container:push -a is3-worker web
+#      - name: Release
+#        env:
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#        run: heroku container:release -a is3-worker web 
+#  deployVote:
+#    name: Delpoy Vote in Heroku
+#    runs-on: ubuntu-latest
+#    needs: [deployWorker]
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Login to Heroku Container registry
+#        env: 
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#        run: heroku container:login 
+#      - name: Setting Vars
+#        env: 
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#        run: |
+#          heroku config:set REDIS_PORT=${{ secrets.REDIS_PORT }} -a is3-vote
+#          heroku config:set REDIS_HOST=${{ secrets.REDIS_HOST }} -a is3-vote
+#          heroku config:set REDIS_PASS=${{ secrets.REDIS_PASS }} -a is3-vote
+#      - name: Build and Push
+#        env:
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#        run: |
+#          cd ./vote
+#          heroku container:push -a is3-vote web
+#      - name: Release
+#        env:
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#        run: heroku container:release -a is3-vote web 
+#  deployResult:
+#    name: Deploy Result in Heroku
+#    runs-on: ubuntu-latest
+#    needs: [deployVote]
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Login to Heroku Container registry
+#        env: 
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#        run: heroku container:login 
+#      - name: Setting Vars
+#        env: 
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#        run: |
+#          heroku config:set POST_URI=${{ secrets.POST_URI }} -a is3-result
+#      - name: Build and Push
+#        env:
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#        run: |
+#          cd ./result
+#          heroku container:push -a is3-result web
+#      - name: Release
+#        env:
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#        run: heroku container:release -a is3-result web 
+  integrationTest:
+    name: Test Case
+    runs-on: ubuntu-latest
+#    needs: [deployResult, deployVote, deployWorker]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Building
+        run: |
+          cd ./integration-test
+          npm install
+      - name: testing
+        run: |
+          npx codeceptjs init
+          npx codeceptjs run --steps
