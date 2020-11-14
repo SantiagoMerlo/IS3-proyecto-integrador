@@ -3,3 +3,4 @@ Redis
 gunicorn
 requests
 pytest
+pytest-cov
