@@ -102,8 +102,6 @@ class Worker {
 
       String url = strConnectionPostgres();
 
-      //System.err.printf(url);
-
       while (conn == null) {
         try {
           conn = DriverManager.getConnection(url);

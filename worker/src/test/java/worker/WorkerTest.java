@@ -13,6 +13,6 @@ public class WorkerTest {
     @Test
     static void redisPingTest(){
         Jedis conn = mock(Jedis.class);
-        assertEquals("Server is running: PONG", Worker.redisPing(conn));
+        assertEquals("Server is running:PONG", Worker.redisPing(conn));
     }
 }
