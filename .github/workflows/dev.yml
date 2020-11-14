@@ -53,6 +53,11 @@ jobs:
         with:
           name: Unit Test Results (Python ${{ matrix.python-version }})
           path: pytest.xml
+      - uses: 5monkeys/cobertura-action@master
+        with:
+          path: ./pytest.xml
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          minimum_coverage: 75
   #SonarCloud:
   #  name: Build
   #  runs-on: ubuntu-latest
