@@ -6,10 +6,6 @@ class UnitTest(unittest.TestCase):
     
   url = 'https://is3-vote.herokuapp.com/'
 
-  def test_redis_fail(self):
-    result = get_redis('0.0.0.0','PASS123',5000)
-    self.assertEqual(result, None)
-
   def test_get_status_200(self):
     app.testing = True  
     tester = app.test_client(self)
