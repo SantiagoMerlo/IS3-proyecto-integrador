@@ -102,4 +102,4 @@ jobs:
       - name: testing
         run: |
           npx codeceptjs init
-          npx codeceptjs run --steps
+          npm run codeceptjs
