@@ -1,4 +1,5 @@
 Flask
 Redis
 gunicorn
+requests
 pytest
