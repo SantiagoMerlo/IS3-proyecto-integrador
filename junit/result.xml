@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="3.9230" tests="2" failures="0">
+  <testsuite name="Root Suite" timestamp="2020-11-14T19:51:53" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="Result" timestamp="2020-11-14T19:51:53" tests="1" file="/home/sovie/Desktop/example-voting-app/integration-test/result_test.js" time="2.0960" failures="0">
+    <testcase name="Result: Testing Result View" time="2.0960" classname="Testing Result View">
+    </testcase>
+  </testsuite>
+  <testsuite name="Vote" timestamp="2020-11-14T19:51:56" tests="1" file="/home/sovie/Desktop/example-voting-app/integration-test/vote_test.js" time="1.8270" failures="0">
+    <testcase name="Vote: Testing Vote View" time="1.8270" classname="Testing Vote View">
+    </testcase>
+  </testsuite>
+</testsuites>

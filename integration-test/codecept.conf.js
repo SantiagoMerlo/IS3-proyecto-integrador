@@ -18,7 +18,23 @@ exports.config = {
     I: './steps_file.js'
   },
   bootstrap: null,
-  mocha: {},
+  mocha:  {
+    "reporterOptions": {
+      "codeceptjs-cli-reporter": {
+        "stdout": "-",
+        "options": {
+          "steps": true,
+        }
+      },
+      "mocha-junit-reporter": {
+        "stdout": "../junit/console.log",
+        "options": {
+          "mochaFile": "../junit/result.xml"
+        },
+        "attachments": true
+		  }
+		}
+	},
   name: 'integration-test',
   plugins: {
     pauseOnFail: {},
