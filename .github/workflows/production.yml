@@ -1,8 +1,9 @@
-name: AppProd
+name: production
 
 on:
   push:
     branches: master
+    
 jobs:
 #############  DEPLOY 
   deployWorker:

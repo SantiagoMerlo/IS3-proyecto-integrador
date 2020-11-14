@@ -1,11 +1,10 @@
-name: AppDev
+name: dev
 
 on:
   push:
     branches: dev
 
 jobs:
-############  BUILDING 
   docker:
     name: Docker Build and Push
     runs-on: ubuntu-latest
