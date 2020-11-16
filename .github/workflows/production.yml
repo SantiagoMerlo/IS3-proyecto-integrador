@@ -45,7 +45,6 @@ jobs:
           pip install -r requirements.txt
       - name: PyTest
         run: python -m pytest ./vote/test --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
-
       - name: Upload Unit Test Results
         uses: actions/upload-artifact@v2
         with:
@@ -161,7 +160,7 @@ jobs:
       - name: Release
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:release -a is3-result web 
+        run: heroku container:release -a is3-result web     
   integrationTest:
     name: Integration Test
     runs-on: ubuntu-latest

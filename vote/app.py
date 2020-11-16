@@ -5,7 +5,7 @@ import socket
 import random
 import json
 
-option_a = os.getenv('OPTION_A', "Cats")
+option_a = os.getenv('OPTION_A', "Cows")
 option_b = os.getenv('OPTION_B', "Dogs")
 hostname = socket.gethostname()
 PORT = int(os.environ.get("PORT", 5000))
@@ -53,7 +53,6 @@ def count_vote(vote, voter_id):
     return vote
 
 def get_voter(voter_id):
-    voter_id = voter_id
     if not voter_id:
         print('Usuario nuevo')
         voter_id = hex(random.getrandbits(64))[2:-1]
